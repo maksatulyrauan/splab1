@@ -1,7 +1,8 @@
 #! /bin/bash
+cut -f4,10 -d' ' log.txt | sed 's/\[//' | cut -f1,4 -d':' | sed 's/\:/ /' | cut -f1,3 -d' ' | sed 's/\//-/g' | awk -F ' ' '{a[$1] += $2} END {for (i in a) print i, a[i]}' | sort -k2 | tail -10 | tac > p;
 
-# run this script as "top10 log.txt"
+cut -f4,7,10 -d' ' log.txt | sed 's/\[//' | sed 's/\:/ /g' | cut -f1,5 -d' ' | sort | uniq -c | sed 's/ *//' | cut -f1,2 -d' ' | awk -F ' ' '{a[$2] += $1} END {for (i in a) print i, a[i]}' | sed 's/\//-/g' | sort > pop;
 
-# here comes your solution
-# e.g.
-grep world $1
+s=$(cut -f4 -d' ' log.txt | sed 's/\:/ /' | cut -f1 -d' ' | cut -f2 -d'[' | sed 's/\//-/g' | sort | uniq -c | sed 's/^ *//g' | awk '{a = $1; $1 = $2; $2 = a; print}' | awk '{b += $2} END {print b}');
+
+cat pop | while read line; do if grep ${line%????} p; then echo $line "$((100*${line:12:3}/$s))"%; fi; done | sed 's/ /-/g';    
